@@ -1,6 +1,6 @@
 # Digitaler Anhang
 
-Digitaler Anhang für die Bachelorarbeit von Kazim Ali Mazhar (@91maka1bif) im Sommersemester 2021.
+Digitaler Anhang für die Bachelorarbeit von Kazim Ali Mazhar ([91maka1bif@hft-stuttgart.de](mailto:91maka1bif@hft-stuttgart.de)) im Sommersemester 2021.
 
 # Anmerkungen
 
