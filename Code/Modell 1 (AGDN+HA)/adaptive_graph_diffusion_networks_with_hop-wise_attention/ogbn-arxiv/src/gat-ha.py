@@ -167,7 +167,7 @@ def run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, n_running,
     accs, train_accs, val_accs, test_accs = [], [], [], []
     losses, train_losses, val_losses, test_losses = [], [], [], []
 
-	# profiler code wrapped around training loop (by Kazim Ali Mazhar)
+    # profiler code wrapped around training loop (by Kazim Ali Mazhar)
     with profiler.profile(
         activities=[
             profiler.ProfilerActivity.CPU,
@@ -307,63 +307,63 @@ def main():
         print(args)
         return
     else:
-		if args.cpu:
-			device = th.device("cpu")
-		else:
-			device = th.device("cuda:%d" % args.gpu)
+        if args.cpu:
+            device = th.device("cpu")
+        else:
+            device = th.device("cuda:%d" % args.gpu)
 
-		# load data
-		data = DglNodePropPredDataset(name="ogbn-arxiv", root="../dataset")
-		evaluator = Evaluator(name="ogbn-arxiv")
+        # load data
+        data = DglNodePropPredDataset(name="ogbn-arxiv", root="../dataset")
+        evaluator = Evaluator(name="ogbn-arxiv")
 
-		args_dict = dict(args._get_kwargs())
-		exclude_names = ['cpu' ,'gpu', 'log_every', 'log_path', 'plot_curves']
-		logger_args = []
-		for u,v in args_dict.items():
-			if u not in exclude_names:
-				logger_args.extend([u, str(v)])
-		logger = get_logger(os.path.join(args.log_path, "_".join(logger_args) + ".log"))
+        args_dict = dict(args._get_kwargs())
+        exclude_names = ['cpu' ,'gpu', 'log_every', 'log_path', 'plot_curves']
+        logger_args = []
+        for u,v in args_dict.items():
+            if u not in exclude_names:
+                logger_args.extend([u, str(v)])
+        logger = get_logger(os.path.join(args.log_path, "_".join(logger_args) + ".log"))
 
-		splitted_idx = data.get_idx_split()
-		train_idx, val_idx, test_idx = splitted_idx["train"], splitted_idx["valid"], splitted_idx["test"]
-		graph, labels = data[0]
+        splitted_idx = data.get_idx_split()
+        train_idx, val_idx, test_idx = splitted_idx["train"], splitted_idx["valid"], splitted_idx["test"]
+        graph, labels = data[0]
 
-		# add reverse edges
-		srcs, dsts = graph.all_edges()
-		graph.add_edges(dsts, srcs)
+        # add reverse edges
+        srcs, dsts = graph.all_edges()
+        graph.add_edges(dsts, srcs)
 
-		# add self-loop
-		logger.debug(f"Total edges before adding self-loop {graph.number_of_edges()}")
-		graph = graph.remove_self_loop().add_self_loop()
-		logger.debug(f"Total edges after adding self-loop {graph.number_of_edges()}")
+        # add self-loop
+        logger.debug(f"Total edges before adding self-loop {graph.number_of_edges()}")
+        graph = graph.remove_self_loop().add_self_loop()
+        logger.debug(f"Total edges after adding self-loop {graph.number_of_edges()}")
 
-		in_feats = graph.ndata["feat"].shape[1]
-		n_classes = (labels.max() + 1).item()
-		# graph.create_format_()
+        in_feats = graph.ndata["feat"].shape[1]
+        n_classes = (labels.max() + 1).item()
+        # graph.create_format_()
 
-		train_idx = train_idx.to(device)
-		val_idx = val_idx.to(device)
-		test_idx = test_idx.to(device)
-		labels = labels.to(device)
-		graph = graph.to(device)
+        train_idx = train_idx.to(device)
+        val_idx = val_idx.to(device)
+        test_idx = test_idx.to(device)
+        labels = labels.to(device)
+        graph = graph.to(device)
 
-		# run
-		val_accs = []
-		test_accs = []
+        # run
+        val_accs = []
+        test_accs = []
 
-		for i in range(1, args.n_runs + 1):
-			seed(i + args.seed)
-			val_acc, test_acc = run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, i, logger)
-			val_accs.append(val_acc)
-			test_accs.append(test_acc)
+        for i in range(1, args.n_runs + 1):
+            seed(i + args.seed)
+            val_acc, test_acc = run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, i, logger)
+            val_accs.append(val_acc)
+            test_accs.append(test_acc)
 
-		logger.info(f"Runned {args.n_runs} times")
-		logger.info(f"Val Accs: {val_accs}")
-		logger.info(f"Test Accs: {test_accs}")
-		logger.info(f"Average val accuracy: {np.mean(val_accs)} ± {np.std(val_accs)}")
-		logger.info(f"Average test accuracy: {np.mean(test_accs)} ± {np.std(test_accs)}")
-		logger.info(f"Number of params: {count_parameters(args)}")
-		logger.info(f"args: {args}")
+        logger.info(f"Runned {args.n_runs} times")
+        logger.info(f"Val Accs: {val_accs}")
+        logger.info(f"Test Accs: {test_accs}")
+        logger.info(f"Average val accuracy: {np.mean(val_accs)} ± {np.std(val_accs)}")
+        logger.info(f"Average test accuracy: {np.mean(test_accs)} ± {np.std(test_accs)}")
+        logger.info(f"Number of params: {count_parameters(args)}")
+        logger.info(f"args: {args}")
 
 
 if __name__ == "__main__":

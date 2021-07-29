@@ -146,7 +146,7 @@ def run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, n_running)
     accs, train_accs, val_accs, test_accs = [], [], [], []
     losses, train_losses, val_losses, test_losses = [], [], [], []
 
-	# profiler code wrapped around training loop (by Kazim Ali Mazhar)
+    # profiler code wrapped around training loop (by Kazim Ali Mazhar)
     with profiler.profile(
         activities=[
             profiler.ProfilerActivity.CPU,
@@ -237,7 +237,7 @@ def run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, n_running)
         plt.legend()
         plt.tight_layout()
         plt.savefig(f"gat_loss_{n_running}.png")
-        
+
     f = open( 'file.txt', 'w' )
     f.write(repr(p.key_averages(group_by_input_shape=False, group_by_stack_n=0).table(sort_by='self_cpu_time_total')))
     f.close()
@@ -275,67 +275,67 @@ def main():
     argparser.add_argument("--plot-curves", action="store_true")
     argparser.add_argument("--printargs", action="store_true")
     args = argparser.parse_args()
-    
+
     if args.printargs:
         print("Parameter:")
         print(args)
         return
     else:
-		if args.cpu:
-			device = th.device("cpu")
-		else:
-			device = th.device("cuda:%d" % args.gpu)
+        if args.cpu:
+            device = th.device("cpu")
+        else:
+            device = th.device("cuda:%d" % args.gpu)
 
-		# load data
-		data = DglNodePropPredDataset(name="ogbn-arxiv")
-		evaluator = Evaluator(name="ogbn-arxiv")
+        # load data
+        data = DglNodePropPredDataset(name="ogbn-arxiv")
+        evaluator = Evaluator(name="ogbn-arxiv")
 
-		splitted_idx = data.get_idx_split()
-		train_idx, val_idx, test_idx = splitted_idx["train"], splitted_idx["valid"], splitted_idx["test"]
-		graph, labels = data[0]
+        splitted_idx = data.get_idx_split()
+        train_idx, val_idx, test_idx = splitted_idx["train"], splitted_idx["valid"], splitted_idx["test"]
+        graph, labels = data[0]
 
-		# add reverse edges
-		srcs, dsts = graph.all_edges()
-		graph.add_edges(dsts, srcs)
+        # add reverse edges
+        srcs, dsts = graph.all_edges()
+        graph.add_edges(dsts, srcs)
 
-		# add self-loop
-		print(f"Total edges before adding self-loop {graph.number_of_edges()}")
-		graph = graph.remove_self_loop().add_self_loop()
-		print(f"Total edges after adding self-loop {graph.number_of_edges()}")
+        # add self-loop
+        print(f"Total edges before adding self-loop {graph.number_of_edges()}")
+        graph = graph.remove_self_loop().add_self_loop()
+        print(f"Total edges after adding self-loop {graph.number_of_edges()}")
 
-		in_feats = graph.ndata["feat"].shape[1]
-		n_classes = (labels.max() + 1).item()
-		# graph.create_format_()
+        in_feats = graph.ndata["feat"].shape[1]
+        n_classes = (labels.max() + 1).item()
+        # graph.create_format_()
 
-		train_idx = train_idx.to(device)
-		val_idx = val_idx.to(device)
-		test_idx = test_idx.to(device)
-		labels = labels.to(device)
-		graph = graph.to(device)
+        train_idx = train_idx.to(device)
+        val_idx = val_idx.to(device)
+        test_idx = test_idx.to(device)
+        labels = labels.to(device)
+        graph = graph.to(device)
 
-		# run
-		val_accs = []
-		test_accs = []
-		model_dir = f'../models/arxiv_gat'
-		   
-		if os.path.exists(model_dir):
-			shutil.rmtree(model_dir)
-		os.makedirs(model_dir)
-		with open(f'{model_dir}/metadata', 'w') as f:
-			f.write(f'# of params: {sum(p.numel() for p in gen_model(args).parameters())}\n')
+        # run
+        val_accs = []
+        test_accs = []
+        model_dir = f'../models/arxiv_gat'
 
-		for i in range(1, args.n_runs + 1):
-			val_acc, test_acc, out = run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, i)
-			val_accs.append(val_acc)
-			test_accs.append(test_acc)
-			th.save(F.softmax(out, dim=1), f'{model_dir}/{i-1}.pt')
+        if os.path.exists(model_dir):
+            shutil.rmtree(model_dir)
+        os.makedirs(model_dir)
+        with open(f'{model_dir}/metadata', 'w') as f:
+            f.write(f'# of params: {sum(p.numel() for p in gen_model(args).parameters())}\n')
 
-		print(f"Runned {args.n_runs} times")
-		print("Val Accs:", val_accs)
-		print("Test Accs:", test_accs)
-		print(f"Average val accuracy: {np.mean(val_accs)} ± {np.std(val_accs)}")
-		print(f"Average test accuracy: {np.mean(test_accs)} ± {np.std(test_accs)}")
-		print(f"Number of params: {count_parameters(args)}")
+        for i in range(1, args.n_runs + 1):
+            val_acc, test_acc, out = run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, i)
+            val_accs.append(val_acc)
+            test_accs.append(test_acc)
+            th.save(F.softmax(out, dim=1), f'{model_dir}/{i-1}.pt')
+
+        print(f"Runned {args.n_runs} times")
+        print("Val Accs:", val_accs)
+        print("Test Accs:", test_accs)
+        print(f"Average val accuracy: {np.mean(val_accs)} ± {np.std(val_accs)}")
+        print(f"Average test accuracy: {np.mean(test_accs)} ± {np.std(test_accs)}")
+        print(f"Number of params: {count_parameters(args)}")
 
 
 if __name__ == "__main__":

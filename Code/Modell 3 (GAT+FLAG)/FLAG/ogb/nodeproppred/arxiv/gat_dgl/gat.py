@@ -180,7 +180,7 @@ def run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, n_running)
     accs, train_accs, val_accs, test_accs = [], [], [], []
     losses, train_losses, val_losses, test_losses = [], [], [], []
 
-	# profiler code wrapped around training loop (by Kazim Ali Mazhar)
+    # profiler code wrapped around training loop (by Kazim Ali Mazhar)
     with profiler.profile(
         activities=[
             profiler.ProfilerActivity.CPU,
@@ -323,53 +323,53 @@ def main():
         print(args)
         return
     else:
-		if args.cpu:
-			device = th.device("cpu")
-		else:
-			device = th.device("cuda:%d" % args.gpu)
+        if args.cpu:
+            device = th.device("cpu")
+        else:
+            device = th.device("cuda:%d" % args.gpu)
 
-		# load data
-		data = DglNodePropPredDataset(name="ogbn-arxiv")
-		evaluator = Evaluator(name="ogbn-arxiv")
+        # load data
+        data = DglNodePropPredDataset(name="ogbn-arxiv")
+        evaluator = Evaluator(name="ogbn-arxiv")
 
-		splitted_idx = data.get_idx_split()
-		train_idx, val_idx, test_idx = splitted_idx["train"], splitted_idx["valid"], splitted_idx["test"]
-		graph, labels = data[0]
+        splitted_idx = data.get_idx_split()
+        train_idx, val_idx, test_idx = splitted_idx["train"], splitted_idx["valid"], splitted_idx["test"]
+        graph, labels = data[0]
 
-		# add reverse edges
-		srcs, dsts = graph.all_edges()
-		graph.add_edges(dsts, srcs)
+        # add reverse edges
+        srcs, dsts = graph.all_edges()
+        graph.add_edges(dsts, srcs)
 
-		# add self-loop
-		print(f"Total edges before adding self-loop {graph.number_of_edges()}")
-		graph = graph.remove_self_loop().add_self_loop()
-		print(f"Total edges after adding self-loop {graph.number_of_edges()}")
+        # add self-loop
+        print(f"Total edges before adding self-loop {graph.number_of_edges()}")
+        graph = graph.remove_self_loop().add_self_loop()
+        print(f"Total edges after adding self-loop {graph.number_of_edges()}")
 
-		in_feats = graph.ndata["feat"].shape[1]
-		n_classes = (labels.max() + 1).item()
-		# graph.create_format_()
+        in_feats = graph.ndata["feat"].shape[1]
+        n_classes = (labels.max() + 1).item()
+        # graph.create_format_()
 
-		train_idx = train_idx.to(device)
-		val_idx = val_idx.to(device)
-		test_idx = test_idx.to(device)
-		labels = labels.to(device)
-		graph = graph.to(device)
+        train_idx = train_idx.to(device)
+        val_idx = val_idx.to(device)
+        test_idx = test_idx.to(device)
+        labels = labels.to(device)
+        graph = graph.to(device)
 
-		# run
-		val_accs = []
-		test_accs = []
+        # run
+        val_accs = []
+        test_accs = []
 
-		for i in range(1, args.n_runs + 1):
-			val_acc, test_acc = run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, i)
-			val_accs.append(val_acc)
-			test_accs.append(test_acc)
+        for i in range(1, args.n_runs + 1):
+            val_acc, test_acc = run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, i)
+            val_accs.append(val_acc)
+            test_accs.append(test_acc)
 
-		print(f"Runned {args.n_runs} times")
-		print("Val Accs:", val_accs)
-		print("Test Accs:", test_accs)
-		print(f"Average val accuracy: {np.mean(val_accs)} ± {np.std(val_accs)}")
-		print(f"Average test accuracy: {np.mean(test_accs)} ± {np.std(test_accs)}")
-		print(f"Number of params: {count_parameters(args)}")
+        print(f"Runned {args.n_runs} times")
+        print("Val Accs:", val_accs)
+        print("Test Accs:", test_accs)
+        print(f"Average val accuracy: {np.mean(val_accs)} ± {np.std(val_accs)}")
+        print(f"Average test accuracy: {np.mean(test_accs)} ± {np.std(test_accs)}")
+        print(f"Number of params: {count_parameters(args)}")
 
 if __name__ == "__main__":
     main()
