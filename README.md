@@ -29,6 +29,10 @@ Digitaler Anhang für die Bachelorarbeit von Kazim Ali Mazhar (@91maka1bif) im S
     ) as p:
 ```
 * Im Einzelnen ist der Profiler-Code in folgenden Python-Skripten zu finden:
-    * Modell 1: [gat-ha.py:170](https://gitlab.rz.hft-stuttgart.de/91maka1bif/bachelorarbeit-digitaler-anhang/-/blob/master/Code/Modell%201%20(AGDN+HA)/adaptive_graph_diffusion_networks_with_hop-wise_attention/ogbn-arxiv/src/gat-ha.py#L170)
-    * Modell 2: [gat\gat.py:149](https://gitlab.rz.hft-stuttgart.de/91maka1bif/bachelorarbeit-digitaler-anhang/-/blob/master/Code/Modell%202%20(GAT+CS)/CorrectAndSmooth/gat/gat.py#L149)
-    * Modell 3: [gat_dgl\gat.py:183](https://gitlab.rz.hft-stuttgart.de/91maka1bif/bachelorarbeit-digitaler-anhang/-/blob/master/Code/Modell%203%20(GAT+FLAG)/FLAG/ogb/nodeproppred/arxiv/gat_dgl/gat.py#L183)
+    * Modell 1: [gat-ha.py:170](Code/Modell%201%20(AGDN+HA)/adaptive_graph_diffusion_networks_with_hop-wise_attention/ogbn-arxiv/src/gat-ha.py)
+    * Modell 2: [gat\gat.py:149](Code/Modell%202%20(GAT+CS)/CorrectAndSmooth/gat/gat.py)
+    * Modell 3: [gat_dgl\gat.py:183](Code/Modell%203%20(GAT+FLAG)/FLAG/ogb/nodeproppred/arxiv/gat_dgl/gat.py)
+* Am Ende der Trainingsschleife wird eine Datei `file.txt` gespeichert, welches die Grundlage für das Arbeitsblatt `Modell<Nummer>_Operator_Quelle1` in [A13_1_Operatoren.xlsx](Anhang/A13_1_Operatoren.xlsx), [A13_2_Operatoren.xlsx](Anhang/A13_2_Operatoren.xlsx) und [A13_3_Operatoren.xlsx](Anhang/A13_3_Operatoren.xlsx) bildet. Über Regex wurde diese Datei zuerst in ein CSV-, dann in ein Excel-Format konvertiert.
+* Die erstellte Logdateien bilden die Grundlage für die Arbeitsblätter 
+    * `Modell<Nummer>_Operator_Quelle2` in [A13_1_Operatoren.xlsx](Anhang/A13_1_Operatoren.xlsx), [A13_2_Operatoren.xlsx](Anhang/A13_2_Operatoren.xlsx) und [A13_3_Operatoren.xlsx](Anhang/A13_3_Operatoren.xlsx) sowie
+    * `Modell<Nummer>_Kernel_Quelle1` und `Modell<Nummer>_Kernel_Quelle2` in [A15_1_16_1_Kernels.xlsx](Anhang/A15_1_16_1_Kernels.xlsx), [A15_2_16_2_Kernels.xlsx](Anhang/A15_2_16_2_Kernels.xlsx) und [A15_3_16_3_Kernels.xlsx](Anhang/A15_3_16_3_Kernels.xlsx).
