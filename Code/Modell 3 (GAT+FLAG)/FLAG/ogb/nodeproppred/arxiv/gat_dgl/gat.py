@@ -195,7 +195,7 @@ def run(args, graph, labels, train_idx, val_idx, test_idx, evaluator, n_running)
         profile_memory=True,
         record_shapes=True,
         with_flops=True,
-        on_trace_ready=profiler.tensorboard_trace_handler('./log_new')
+        on_trace_ready=profiler.tensorboard_trace_handler('./log')
     ) as p:
         for epoch in range(1, args.n_epochs + 1):
             tic = time.time()
